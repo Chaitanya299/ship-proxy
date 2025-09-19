@@ -42,46 +42,34 @@ ship/
 
 ### Option 1: Docker (Recommended)
 
-**Step 1: Build Docker Images**
-```bash
-# Navigate to project directory
-cd /path/to/ship
-
-# Build images
-docker build -t ship-proxy-server:latest -f Dockerfile.server .
-docker build -t ship-proxy-client:latest -f Dockerfile.client .
-```
-
-**Step 2: Create Network and Run Containers**
+#### Quick Start with Published Images
 ```bash
 # Create network
 docker network create shipnet
 
-# Start offshore server
+# Run offshore server (published image)
 docker run -d --rm --name offshore --network shipnet -p 9090:9090 \
-  ship-proxy-server:latest --listen :9090
+  chaitanya299/ship-proxy-server:latest --listen :9090
 
-# Start ship client
+# Run ship client (published image)
 docker run -d --rm --name ship --network shipnet -p 8080:8080 \
-  ship-proxy-client:latest --listen :8080 --server offshore:9090
-```
+  chaitanya299/ship-proxy-client:latest --listen :8080 --server offshore:9090
 
-**Step 3: Verify Containers**
-```bash
-# Check containers are running
-docker ps
-
-# Should show both 'ship' and 'offshore' containers
-```
-
-**Step 4: Test Basic Functionality**
-```bash
-# Test HTTP
+# Test immediately
 curl -x http://localhost:8080 http://httpforever.com/
-
-# Test HTTPS
-curl -x http://localhost:8080 https://example.com/
 ```
+
+#### Build from Source (Alternative)
+```bash
+# Navigate to project directory
+cd /path/to/ship
+
+# Build images locally
+docker build -t ship-proxy-server:latest -f Dockerfile.server .
+docker build -t ship-proxy-client:latest -f Dockerfile.client .
+```
+
+**Then follow the same network and container steps as above.**
 
 ### Option 2: Local Python
 
@@ -409,3 +397,25 @@ This implementation satisfies all requirements:
 - ✅ **All HTTP methods**: GET/POST/PUT/DELETE/PATCH/HEAD/OPTIONS all supported and tested
 
 **Test Results**: All tests pass with 200 status codes and proper sequential timing behavior.
+
+## 🚀 **Public Repository & Images**
+
+### **GitHub Repository**
+- **Source Code**: https://github.com/chaitanya299/ship-proxy
+- **Issues & Contributions**: Welcome via GitHub issues and pull requests
+
+### **Docker Hub Images**
+- **Server Image**: `chaitanya299/ship-proxy-server:latest`
+- **Client Image**: `chaitanya299/ship-proxy-client:latest`
+- **Docker Hub**: https://hub.docker.com/u/chaitanya299
+
+### **One-Command Setup**
+```bash
+# Complete setup in 3 commands
+docker network create shipnet
+docker run -d --rm --name offshore --network shipnet -p 9090:9090 chaitanya299/ship-proxy-server:latest --listen :9090
+docker run -d --rm --name ship --network shipnet -p 8080:8080 chaitanya299/ship-proxy-client:latest --listen :8080 --server offshore:9090
+
+# Test immediately
+curl -x http://localhost:8080 http://httpforever.com/
+```
